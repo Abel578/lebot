@@ -1,19 +1,20 @@
 import random  
 import logging  
 import os  
-import asyncio  # ✅ AJOUT
-from aiohttp import web  # ✅ AJOUT
+import asyncio
+from aiohttp import web
 
 from aiogram import Bot, Dispatcher, types, F  
 from aiogram.filters import Command  
 from aiogram.utils.keyboard import InlineKeyboardBuilder  
 from aiogram.types import InlineKeyboardButton, WebAppInfo, FSInputFile  
 
-# --- SERVEUR WEB (OBLIGATOIRE POUR REPLIT) ---
+# --- SERVEUR WEB ---
 async def start_web_server():
     app = web.Application()
 
     async def handle(request):
+        print("PING REÇU")
         return web.Response(text="Bot en ligne ✅")
 
     app.router.add_get("/", handle)
@@ -21,7 +22,7 @@ async def start_web_server():
     runner = web.AppRunner(app)
     await runner.setup()
 
-    port = int(os.environ.get("PORT", 8080))  # ✅ IMPORTANT
+    port = int(os.environ.get("PORT", 8080))
     site = web.TCPSite(runner, "0.0.0.0", port)
 
     await site.start()
@@ -39,10 +40,14 @@ dp = Dispatcher()
 
 # --- MAIN CORRIGÉ ---
 async def main():
-    asyncio.create_task(start_web_server())
-    await asyncio.sleep(2)
-    print("BOT LANCÉ")
-    await dp.start_polling(bot)
+    await start_web_server()  # serveur prioritaire
+
+    print("SERVEUR WEB OK")
+
+    asyncio.create_task(dp.start_polling(bot))  # bot en parallèle
+
+    while True:  # empêche Replit de couper
+        await asyncio.sleep(3600)
 
 # --- 1. LE CAPTCHA ---  
 @dp.message(Command("start"))  
@@ -65,7 +70,7 @@ async def cmd_start(message: types.Message):
     text = f"🤖 **Vérification anti-bot**\n\nRésous : **{n1} + {n2} = ?**"  
     await message.answer(text, reply_markup=builder.as_markup(), parse_mode="Markdown")  
 
-# --- 2. VÉRIFICATION ---  
+# --- 2. VÉRIFICATION ET ENVOI ---  
 @dp.callback_query(F.data.startswith("c_"))  
 async def check_captcha(callback: types.CallbackQuery):  
     data = callback.data.split("_")  
@@ -73,7 +78,7 @@ async def check_captcha(callback: types.CallbackQuery):
 
     if choice == correct:  
         await callback.message.delete()  
-
+          
         caption_text = (  
             "⚡️⚡️⚡️⚡️⚡️⚡️⚡️⚡️⚡️\n"  
             "5 Jahre beherrschter Großstadtdschungel. Die anderen? Immer noch in den Lianen fest 🤭\n"  
@@ -116,4 +121,4 @@ async def check_captcha(callback: types.CallbackQuery):
 # --- LANCEMENT ---
 if __name__ == "__main__":  
     print("🚀 Bot Marsupilami lancé...")  
-    asyncio.run(main())  # ✅ IMPORTANT (remplace run_polling)
+    asyncio.run(main())
