@@ -11,7 +11,7 @@ TOKEN = "8797117906:AAG-S0uTTtS-vIE35_4CBHYQKBlPhfbtoic"
 # Chemin exact vers ton image sur Android/Termux
 PHOTO_PATH = "1773931259708.png" 
 # Ton lien Mini App (doit être en https://)
-MINI_APP_URL = "https://vercel.com/abel578s-projects/le-menu-app/FJMbdxpsH1agtrpPFWTDyuFBa94H" 
+MINI_APP_URL = "https://le-menu-app-ashen.vercel.app" 
 # Ton lien de canal
 CHANNEL_URL = "https://t.me/menu000000"
 
