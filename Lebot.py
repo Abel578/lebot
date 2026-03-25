@@ -5,7 +5,12 @@ from aiogram import Bot, Dispatcher, types, F
 from aiogram.filters import Command
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 from aiogram.types import InlineKeyboardButton, WebAppInfo, FSInputFile
+async def main():
+    # Démarrer serveur web AVANT
+    await start_web_server()
 
+    # Puis lancer bot
+    await dp.start_polling(bot)
 # --- CONFIGURATION ---
 TOKEN = "8797117906:AAG-S0uTTtS-vIE35_4CBHYQKBlPhfbtoic"
 # Chemin exact vers ton image sur Android/Termux
